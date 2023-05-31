@@ -7,6 +7,11 @@ pipeline {
         AWS_DEFAULT_REGION = "eu-west-3"
     }
     stages {
+        stage('Cloning Git') {
+            steps {
+                git 'https://github.com/dsirine/jenkins-pipeline-deploy-to-eks.git'
+          }
+        }
         stage("Create an EKS Cluster") {
             steps {
                 script {
