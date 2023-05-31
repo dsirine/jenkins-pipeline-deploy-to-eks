@@ -1,30 +1,37 @@
 #!/usr/bin/env groovy
 pipeline {
     agent any
-    environment {
-        AWS_ACCESS_KEY_ID = credentials('AWS_ACCESS_KEY_ID')
-        AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
-        AWS_DEFAULT_REGION = "eu-west-3"
-    }
     stages {
         stage("Create an EKS Cluster") {
             steps {
                 script {
-                    dir('terraform') {
-                        sh "terraform init"
-                        sh "terraform apply -auto-approve"
-                    }
+                    withCredentials([[
+                        $class: 'AmazonWebServicesCredentialsBinding',
+                        accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+                        secretKeyVariable: 'AWS_SECRET_ACCESS_KEY',
+                        credentialsId: 'petclinic'
+                        ]])
+                        dir('terraform') {
+                            sh "terraform init"
+                            sh "terraform apply -auto-approve"
+                        }
                 }
             }
         }
         stage("Deploy to EKS") {
             steps {
                 script {
-                    dir('kubernetes') {
-                        sh "aws eks update-kubeconfig --name myapp-eks-cluster"
-                        sh "run_kubernetes.sh"
+                    withCredentials([[
+                        $class: 'AmazonWebServicesCredentialsBinding',
+                        accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+                        secretKeyVariable: 'AWS_SECRET_ACCESS_KEY',
+                        credentialsId: 'petclinic'
+                        ]])
+                        dir('kubernetes') {
+                            sh "aws eks update-kubeconfig --name myapp-eks-cluster"
+                            sh "run_kubernetes.sh"
 
-                    }
+                        }
                 }
             }
         }
