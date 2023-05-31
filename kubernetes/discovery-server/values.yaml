@@ -1,0 +1,10 @@
+replicaCount: 1
+
+image:
+  repository: springcloud
+  name: eureka
+  pullPolicy: IfNotPresent
+
+service:
+  type: NodePort
+  port: 8761

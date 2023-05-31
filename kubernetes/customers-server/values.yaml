@@ -1,0 +1,10 @@
+replicaCount: 1
+
+image:
+  repository: springcommunity
+  name: spring-petclinic-customers-service
+  pullPolicy: IfNotPresent
+
+service:
+  type: NodePort
+  port: 8081

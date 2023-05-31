@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-deployment
+  namespace: petclinic
+  labels:
+    app: discovery-server
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: discovery-server
+  template:
+    metadata:
+      labels:
+        app: discovery-server
+    spec:
+      containers:
+      - name: discovery-server
+        image: "{{ .Values.image.repository }}/{{ .Values.image.name }}"
+        ports:
+        - containerPort: 8761
+        resources:
+          requests:
+            memory: 512M
+      initContainers:
+      - name: init-config-server
+        image: busybox
+        command: ['sh', '-c', 'until nc -z config-server:8888; do echo waiting for config-server; sleep 2; done;']

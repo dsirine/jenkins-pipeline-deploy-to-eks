@@ -1,0 +1,10 @@
+replicaCount: 1
+
+image:
+  repository: springcommunity
+  name: spring-petclinic-config-server
+  pullPolicy: IfNotPresent
+
+service:
+  type: NodePort
+  port: 8888

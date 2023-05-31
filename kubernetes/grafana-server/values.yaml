@@ -1,0 +1,10 @@
+replicaCount: 1
+
+image:
+  repository: dsirine
+  name: grafana
+  pullPolicy: IfNotPresent
+
+service:
+  type: NodePort
+  port: 3000

@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-deployment
+  namespace: petclinic
+  labels:
+    app: customers-server
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: customers-server
+  template:
+    metadata:
+      labels:
+        app: customers-server
+    spec:
+      containers:
+      - name: customers-server
+        image: "{{ .Values.image.repository }}/{{ .Values.image.name }}"
+        command: ["/bin/sh"]
+        args: ["-c", "./dockerize -wait=tcp://discovery-server:8761 -timeout=60s -- java org.springframework.boot.loader.JarLauncher"]        
+        ports:
+        - containerPort: 8081
+        resources:
+          requests:
+            memory: 512M
+          limits:
+            memory: 512M
+      initContainers:
+      - name: init-config-server
+        image: busybox
+        command: ['sh', '-c', 'until nc -z config-server 8888; do echo waiting for config-server; sleep 2; done;']
+      - name: init-discovery-server
+        image: busybox
+        command: ['sh', '-c', 'until nc -z discovery-server 8761; do echo waiting for discovery-server; sleep 2; done;']

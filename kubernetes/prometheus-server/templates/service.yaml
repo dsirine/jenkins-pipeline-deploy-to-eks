@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+    name: {{ .Release.Name }}
+    namespace: petclinic
+spec:
+    ports:
+    - name: prometheus-server
+      targetPort: 9090
+      port: {{ .Values.service.port }}
+      protocol: TCP
+    selector:
+       app: prometheus-server
+    type: {{ .Values.service.type }}

@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-deployment
+  namespace: petclinic
+  labels:
+    app: prometheus-server
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: prometheus-server
+  template:
+    metadata:
+      labels:
+        app: prometheus-server
+    spec:
+      containers:
+      - name: prometheus-server
+        image: "{{ .Values.image.repository }}/{{ .Values.image.name }}"
+        ports:
+        - containerPort: 9090
+        resources:
+          requests:
+            memory: 256M
+          limits:
+            memory: 256M

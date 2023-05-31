@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+    name: {{ .Release.Name }}
+    namespace: petclinic
+spec:
+    ports:
+    - name: visits-service
+      targetPort: 8082
+      port: {{ .Values.service.port }}
+      protocol: TCP
+    selector:
+       app: visits-server
+    type: {{ .Values.service.type }}

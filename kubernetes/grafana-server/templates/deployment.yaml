@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-deployment
+  namespace: petclinic
+  labels:
+    app: grafana-server
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: grafana-server
+  template:
+    metadata:
+      labels:
+        app: grafana-server
+    spec:
+      containers:
+      - name: grafana-server
+        image: "{{ .Values.image.repository }}/{{ .Values.image.name }}"
+        ports:
+        - containerPort: 3000
+        resources:
+          requests:
+            memory: 256M
+          limits:
+            memory: 256M

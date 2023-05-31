@@ -1,0 +1,35 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: discovery-server
+  name: {{ .Release.Name }}-deployment
+  namespace: petclinic
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: discovery-server
+  template:
+    metadata:
+      labels:
+        app: discovery-server
+      namespace: petclinic
+    spec:
+      containers:
+      - command:
+        - ./dockerize
+        - -wait=tcp://config-server:8888
+        - -timeout=60s
+        - --
+        - java
+        - org.springframework.boot.loader.JarLauncher
+        image: "{{ .Values.image.repository }}/{{ .Values.image.name }}"
+        imagePullPolicy: IfNotPresent
+        name: discovery-server
+        ports:
+        - containerPort: 8761
+          protocol: tcp
+        resources:
+          requests:
+            memory: 512M
